@@ -1,0 +1,926 @@
+/* =================================================================
+   FOR YOU, WITH LOVE — stylesheet
+   Design tokens are defined as CSS variables below. Change the
+   palette or type scale from one place: the :root block.
+   ================================================================= */
+
+:root {
+  /* ---- Color palette ---- */
+  --cream:        #FFF8F4;
+  --soft-pink:    #FFE3EE;
+  --baby-pink:    #FFC9DE;
+  --blush:        #F5A8C4;
+  --dusty-rose:   #C77E98;
+  --deep-rose:    #6E3A48;   /* primary text on light bg */
+  --deep-rose-2:  #8C4E60;
+  --gold:         #E9C8A2;   /* sparkle / accent */
+  --white:        #FFFFFF;
+
+  /* ---- Gradients ---- */
+  --bg-gradient: linear-gradient(160deg, var(--cream) 0%, var(--soft-pink) 45%, var(--baby-pink) 100%);
+  --card-gradient: linear-gradient(160deg, rgba(255,255,255,0.75), rgba(255,227,238,0.55));
+
+  /* ---- Typography ---- */
+  --font-display: 'Cormorant Garamond', serif;
+  --font-script: 'Dancing Script', cursive;
+  --font-body: 'Quicksand', sans-serif;
+
+  /* ---- Shadows / glass ---- */
+  --shadow-soft: 0 8px 30px rgba(199, 126, 152, 0.18);
+  --shadow-lift: 0 16px 40px rgba(199, 126, 152, 0.28);
+  --glass-border: 1px solid rgba(255,255,255,0.55);
+
+  /* ---- Motion ---- */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.25s;
+  --dur-med: 0.6s;
+  --dur-slow: 1.4s;
+}
+
+/* Reduce-motion mode toggled via JS by adding this class to <body> */
+body.reduce-motion * {
+  animation-duration: 0.001s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.1s !important;
+  scroll-behavior: auto !important;
+}
+body.reduce-motion .particle-layer { display: none !important; }
+
+/* =========================== RESET =========================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+body {
+  font-family: var(--font-body);
+  color: var(--deep-rose);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  max-width: 100%;
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+/* Subtle grain/noise texture overlay for a premium paper feel */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:focus-visible {
+  outline: 2px solid var(--dusty-rose);
+  outline-offset: 3px;
+}
+
+/* =========================== TYPE HELPERS =========================== */
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--dusty-rose);
+  margin-bottom: 0.9rem;
+}
+.script-heading {
+  font-family: var(--font-script);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  color: var(--deep-rose);
+  line-height: 1.3;
+}
+.display-heading {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  line-height: 1.15;
+  color: var(--deep-rose);
+  max-width: 18ch;
+  margin: 0 auto;
+}
+.section-heading {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--deep-rose);
+  margin-bottom: 0.6rem;
+}
+.section-caption { color: var(--dusty-rose); font-size: 0.95rem; margin-bottom: 2.5rem; }
+/* the playlist caption is split across two lines (song count + name),
+   so it needs a tighter gap between them instead of the usual 2.5rem */
+.playlist-section .section-caption { margin-bottom: 0.3rem; }
+.section-caption-name {
+  font-family: var(--font-script);
+  font-weight: 600;
+  color: var(--deep-rose);
+  font-size: clamp(1.1rem, 4vw, 1.35rem);
+  margin-bottom: 2.5rem;
+}
+.heart { color: var(--blush); }
+
+/* =========================== GLASS + CARD =========================== */
+.glass {
+  background: var(--card-gradient);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: var(--glass-border);
+  box-shadow: var(--shadow-soft);
+}
+
+/* =========================== BUTTONS =========================== */
+.btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--blush), var(--dusty-rose));
+  color: var(--white);
+  box-shadow: var(--shadow-soft);
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+.btn-ghost {
+  background: transparent;
+  color: var(--dusty-rose);
+  border: 1.5px solid var(--dusty-rose);
+}
+.btn-ghost:hover { background: var(--dusty-rose); color: var(--white); }
+
+/* =========================== PARTICLE LAYER =========================== */
+.particle-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  will-change: transform, opacity;
+  opacity: 0.8;
+  animation-name: floatUp;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  color: var(--blush);
+}
+@keyframes floatUp {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.85; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(-110vh) translateX(var(--drift, 20px)) rotate(180deg); opacity: 0; }
+}
+
+/* =========================== PASSWORD SCREEN =========================== */
+.password-screen {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+  overflow: hidden;
+  z-index: 5;
+}
+.password-decor { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.password-decor span {
+  position: absolute;
+  font-size: 2.2rem;
+  color: var(--blush);
+  opacity: 0.55;
+  animation: floatSway 7s ease-in-out infinite;
+}
+.h1 { top: 12%; left: 10%; animation-delay: 0s; }
+.h2 { bottom: 15%; right: 12%; animation-delay: 1.2s; font-size: 1.6rem; }
+.f1 { top: 20%; right: 14%; animation-delay: 0.6s; color: var(--dusty-rose); }
+.f2 { bottom: 22%; left: 16%; animation-delay: 2s; color: var(--dusty-rose); }
+.s1 { top: 45%; left: 6%; animation-delay: 1s; color: var(--gold); font-size: 1.4rem; }
+.s2 { top: 55%; right: 8%; animation-delay: 2.4s; color: var(--gold); font-size: 1.3rem; }
+@keyframes floatSway {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-22px) rotate(4deg); }
+}
+
+.password-card {
+  position: relative;
+  z-index: 2;
+  max-width: 440px;
+  width: 100%;
+  padding: clamp(2rem, 5vw, 3rem);
+  border-radius: 28px;
+  text-align: center;
+}
+.password-sub {
+  font-size: 0.95rem;
+  color: var(--dusty-rose);
+  margin: 1rem 0 1.6rem;
+  letter-spacing: 0.03em;
+}
+.password-form { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+.password-input {
+  width: 100%;
+  text-align: center;
+  font-size: 1.6rem;
+  letter-spacing: 0.5em;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  border: 1.5px solid var(--baby-pink);
+  background: rgba(255,255,255,0.7);
+  color: var(--deep-rose);
+}
+.password-input::placeholder { color: var(--baby-pink); letter-spacing: 0.4em; }
+.password-error {
+  min-height: 1.4em;
+  margin-top: 1rem;
+  color: #B4485E;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.password-card.shake { animation: shake 0.5s var(--ease-soft); }
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-8px); }
+  40%, 60% { transform: translateX(8px); }
+}
+
+/* Unlock transition overlay */
+.unlock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--bg-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-script);
+  font-size: 2rem;
+  color: var(--deep-rose);
+  animation: unlockFade 1.4s var(--ease-soft) forwards;
+}
+@keyframes unlockFade {
+  0% { opacity: 1; transform: scale(1); }
+  70% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+/* =========================== NAVBAR =========================== */
+.navbar {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 50;
+  margin: 0.75rem auto;
+  max-width: 920px;
+  width: calc(100% - 1.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+}
+.nav-logo {
+  font-family: var(--font-script);
+  font-size: 1.3rem;
+  color: var(--deep-rose);
+  font-weight: 600;
+}
+.nav-links { display: flex; gap: 1.6rem; }
+.nav-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--deep-rose-2);
+  position: relative;
+  padding-bottom: 2px;
+}
+.nav-link::after {
+  content: "";
+  position: absolute; left: 0; bottom: -2px;
+  width: 0; height: 1.5px;
+  background: var(--dusty-rose);
+  transition: width var(--dur-fast) var(--ease-soft);
+}
+.nav-link:hover::after { width: 100%; }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+}
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--deep-rose);
+  border-radius: 2px;
+  transition: transform var(--dur-fast) var(--ease-soft), opacity var(--dur-fast) var(--ease-soft);
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* =========================== SECTIONS (shared) =========================== */
+.section {
+  position: relative;
+  z-index: 3;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+  text-align: center;
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s var(--ease-soft), transform 0.8s var(--ease-soft);
+}
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+/* =========================== WELCOME =========================== */
+.welcome-section {
+  min-height: 90vh;
+  min-height: 90svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.welcome-content { max-width: 640px; }
+.welcome-subtext {
+  font-size: 1.05rem;
+  color: var(--deep-rose-2);
+  margin: 1.2rem auto 2.2rem;
+  max-width: 40ch;
+}
+.scroll-hint {
+  position: absolute;
+  bottom: 2rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  color: var(--dusty-rose);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.scroll-hint span {
+  width: 1px; height: 30px;
+  background: var(--dusty-rose);
+  animation: scrollLine 1.8s ease-in-out infinite;
+}
+@keyframes scrollLine { 0%,100% { transform: scaleY(0.4); opacity: 0.4;} 50% { transform: scaleY(1); opacity: 1; } }
+
+/* =========================== COUNTDOWN =========================== */
+.countdown-caption { color: var(--dusty-rose); margin-bottom: 2.4rem; }
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.countdown-unit {
+  border-radius: 22px;
+  padding: 1.4rem 0.5rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+}
+.countdown-number {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  color: var(--deep-rose);
+  font-variant-numeric: tabular-nums;
+}
+.countdown-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dusty-rose);
+}
+.countdown-celebration { margin-top: 2rem; }
+.celebration-text {
+  font-family: var(--font-script);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: var(--deep-rose);
+}
+
+/* =========================== GALLERY =========================== */
+.gallery-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.gallery-track-viewport {
+  overflow: hidden;
+  width: 100%;
+  border-radius: 18px;
+}
+.gallery-track {
+  display: flex;
+  cursor: grab;
+  touch-action: pan-y;
+  transition: transform var(--dur-med) var(--ease-soft);
+}
+.gallery-track.dragging { transition: none; cursor: grabbing; }
+.gallery-slide {
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+}
+.polaroid {
+  background: var(--white);
+  padding: 14px 14px 44px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-lift);
+  transform: rotate(var(--tilt, -2deg));
+  max-width: 340px;
+  width: 100%;
+}
+.polaroid img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  border-radius: 2px;
+  background: linear-gradient(135deg, var(--baby-pink), var(--soft-pink));
+}
+.polaroid-caption {
+  font-family: var(--font-script);
+  font-size: 1.05rem;
+  color: var(--deep-rose-2);
+  text-align: center;
+  margin-top: 12px;
+}
+.gallery-btn {
+  flex: 0 0 auto;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--dusty-rose);
+  box-shadow: var(--shadow-soft);
+  font-size: 0.9rem;
+  transition: transform var(--dur-fast) var(--ease-soft);
+}
+.gallery-btn:hover { transform: scale(1.08); }
+.gallery-dots { display: flex; justify-content: center; gap: 8px; margin-top: 1.4rem; }
+.gallery-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--baby-pink);
+  transition: background var(--dur-fast), width var(--dur-fast);
+}
+.gallery-dot.active { background: var(--dusty-rose); width: 22px; border-radius: 5px; }
+
+/* ===========================
+   A5 BOOK — CONTENT FULL
+   =========================== */
+
+.book-stage {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-cover {
+  border-radius: 20px;
+  padding: clamp(2.2rem, 6vw, 3.5rem) 2rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  transition:
+    opacity var(--dur-med) var(--ease-soft),
+    transform var(--dur-med) var(--ease-soft);
+}
+
+.book-cover.hidden-cover {
+  opacity: 0;
+  transform: scale(0.9) rotateY(-25deg);
+  pointer-events: none;
+  position: absolute;
+}
+
+.book-cover-decor {
+  letter-spacing: 0.6em;
+  color: var(--blush);
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+}
+
+.book-cover-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  margin-bottom: 0.6rem;
+}
+
+.book-cover-subtitle {
+  color: var(--dusty-rose);
+  font-size: 0.95rem;
+  margin-bottom: 1.8rem;
+}
+
+.book {
+  perspective: 1600px;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 148 / 210;
+}
+
+.book-pages {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 148 / 210;
+  background: var(--white);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lift);
+  padding: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.book-page {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  /* TURUN LAGI */
+  padding: 1.6rem 3rem 1.5rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  text-align: left;
+  gap: 0;
+
+  box-sizing: border-box;
+
+  /* the page itself never scrolls or clips its own box — the inner
+     wrapper below is what scrolls, so the page keeps its A5 size */
+  overflow: hidden;
+
+  backface-visibility: hidden;
+  transform-origin: left center;
+
+  transition:
+    transform 0.7s var(--ease-soft),
+    opacity 0.5s var(--ease-soft);
+}
+
+/* Scrollable content area inside each page — this is what lets long
+   letters be read in full without ever resizing the A5 box itself.
+   flex:1 + min-height:0 is required so the child can actually shrink
+   and scroll instead of pushing/overflowing its flex parent. */
+.book-page-inner {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+
+  /* small gap so the scrollbar doesn't sit flush against the text */
+  padding-right: 0.4rem;
+}
+
+/* keep the scroll affordance thin and on-theme instead of the
+   default chunky system scrollbar */
+.book-page-inner::-webkit-scrollbar { width: 5px; }
+.book-page-inner::-webkit-scrollbar-track { background: transparent; }
+.book-page-inner::-webkit-scrollbar-thumb {
+  background: var(--baby-pink);
+  border-radius: 999px;
+}
+.book-page-inner { scrollbar-width: thin; scrollbar-color: var(--baby-pink) transparent; }
+
+.book-page.current {
+  position: absolute;
+  transform: rotateY(0deg);
+  opacity: 1;
+  z-index: 2;
+}
+
+.book-page.next-page {
+  transform: rotateY(-100deg);
+  opacity: 0;
+  z-index: 1;
+}
+
+.book-page.prev-page {
+  transform: rotateY(100deg);
+  opacity: 0;
+  z-index: 1;
+}
+
+.page-title {
+  font-family: var(--font-script);
+  font-size: 1.5rem;
+  color: var(--dusty-rose);
+
+  margin: 0 0 0.9rem 0;
+  padding: 0;
+
+  text-align: left;
+  width: 100%;
+  line-height: 1.2;
+
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.page-text {
+  font-size: 1.02rem;
+  color: var(--deep-rose-2);
+
+  line-height: 1.42;
+
+  margin: 0;
+  padding: 0;
+
+  text-align: left;
+  width: 100%;
+
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ===========================
+   CONTROLS
+   =========================== */
+
+.book-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.2rem;
+}
+
+.book-nav-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--dusty-rose);
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  transition: background var(--dur-fast);
+}
+
+.book-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.book-page-indicator {
+  font-size: 0.8rem;
+  color: var(--dusty-rose);
+}
+
+.book-close {
+  position: absolute;
+  top: -14px;
+  right: -8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: var(--shadow-soft);
+  color: var(--dusty-rose);
+  z-index: 5;
+}
+
+/* ===========================
+   MOBILE
+   =========================== */
+
+@media (max-width: 600px) {
+  .book-stage {
+    width: 100%;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .book {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 148 / 210;
+  }
+
+  .book-pages {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 148 / 210;
+    border-radius: 14px;
+  }
+
+  .book-page {
+    padding: 1.4rem 1.2rem 1rem 1.5rem;
+  }
+
+  .book-page-inner {
+    padding-right: 0.3rem;
+  }
+
+  .page-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.15;
+  }
+
+  .page-text {
+    font-size: 0.90rem;
+    line-height: 1.38;
+  }
+
+  .book-close {
+    top: -6px;
+    right: -2px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* =========================== PLAYLIST =========================== */
+.player {
+  max-width: 620px;
+  margin: 0 auto 1.4rem;
+  border-radius: 22px;
+  padding: 1.1rem;
+}
+.spotify-embed {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  border: none;
+}
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  margin-top: 0.9rem;
+}
+.player-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--dusty-rose);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  transition: background var(--dur-fast);
+}
+.player-btn:hover { background: rgba(255,255,255,0.5); }
+
+.playlist-list {
+  max-width: 620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+.playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.5);
+  transition: background var(--dur-fast), transform var(--dur-fast);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.playlist-item:hover { background: rgba(255,255,255,0.85); transform: translateX(3px); }
+.playlist-item.active { background: var(--white); box-shadow: var(--shadow-soft); }
+.playlist-index { width: 22px; font-size: 0.8rem; color: var(--dusty-rose); font-variant-numeric: tabular-nums; }
+.playlist-titles {
+  flex: 1;
+  min-width: 0;
+  /* the item itself must not grow past its flex share, or the
+     title span below has nothing to truncate against */
+  max-width: 100%;
+  overflow: hidden;
+}
+.playlist-title {
+  display: block;
+  width: 100%;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.playlist-artist {
+  display: block;
+  width: 100%;
+  font-size: 0.76rem;
+  color: var(--dusty-rose);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.playlist-play-icon { font-size: 0.85rem; color: var(--dusty-rose); }
+
+/* =========================== FOOTER =========================== */
+.footer {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 5rem 1.5rem 3.5rem;
+}
+.footer-decor { letter-spacing: 0.8em; color: var(--blush); margin-bottom: 1rem; font-size: 1rem; }
+.footer-line { font-family: var(--font-script); font-size: 1.6rem; color: var(--deep-rose); }
+.footer-sub { font-family: var(--font-body); font-size: 0.95rem; color: var(--dusty-rose); font-weight: 600; margin-top: 0.3rem; margin-bottom: 1.8rem; }
+.reduce-motion-toggle {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  margin-top: 2rem;
+  font-size: 0.78rem; color: var(--dusty-rose);
+}
+.reduce-motion-toggle input { accent-color: var(--dusty-rose); }
+
+/* =================================================================
+   RESPONSIVE BREAKPOINTS
+   Mobile: 320–480 | Tablet: 481–768 | Laptop: 769–1440 | Desktop: 1441+
+   ================================================================= */
+
+/* ---- Tablet and below: hamburger menu appears ---- */
+@media (max-width: 768px) {
+  .nav-links {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    width: min(280px, 90vw);
+    flex-direction: column;
+    gap: 0;
+    background: var(--card-gradient);
+    backdrop-filter: blur(16px);
+    border: var(--glass-border);
+    border-radius: 20px;
+    padding: 0.6rem;
+    box-shadow: var(--shadow-lift);
+    transform-origin: top center;
+    transform: scaleY(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform var(--dur-fast) var(--ease-soft), opacity var(--dur-fast) var(--ease-soft);
+  }
+  .nav-links.open { transform: scaleY(1); opacity: 1; pointer-events: auto; }
+  .nav-link { display: block; padding: 0.8rem 1rem; border-radius: 12px; }
+  .nav-link:hover { background: rgba(255,255,255,0.5); }
+  .nav-toggle { display: flex; }
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 480px) {
+  .section { padding: 4.5rem 1.1rem; }
+  .countdown-grid { gap: 0.6rem; }
+  .countdown-unit { padding: 1rem 0.3rem; border-radius: 16px; }
+  .player { padding: 1rem; }
+  .book-pages { padding: 1.8rem 1.4rem; min-height: 340px; }
+  .navbar { padding: 0.6rem 1rem; }
+}
+
+/* ---- Laptop / Desktop: roomier layout ---- */
+@media (min-width: 769px) {
+  .section { padding: 8rem 2rem; }
+  .gallery-wrap { gap: 1.5rem; }
+  .book-stage { min-height: 540px; }
+  .book-pages { min-height: 420px; padding: 3rem 3.5rem; }
+}
+
+@media (min-width: 1441px) {
+  .section { max-width: 1240px; padding: 9rem 2rem; }
+  .display-heading { max-width: 22ch; }
+}
